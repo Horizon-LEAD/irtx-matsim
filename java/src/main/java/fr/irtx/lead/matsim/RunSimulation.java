@@ -3,6 +3,7 @@ package fr.irtx.lead.matsim;
 import java.io.File;
 import java.io.IOException;
 
+import org.eqasim.core.components.config.EqasimConfigGroup;
 import org.eqasim.core.simulation.analysis.EqasimAnalysisModule;
 import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
 import org.eqasim.ile_de_france.IDFConfigurator;
@@ -27,19 +28,26 @@ public class RunSimulation {
 	static public void main(String[] args)
 			throws ConfigurationException, JsonParseException, JsonMappingException, IOException {
 		CommandLine cmd = new CommandLine.Builder(args) //
-				.requireOptions("config-path") //
+				.requireOptions("config-path", "output-path") //
 				.allowPrefixes("mode-choice-parameter", "cost-parameter") //
-				.allowPrefixes("freight-path") //
+				.allowOptions("freight-path", "threads", "iterations", "random-seed") //
 				.build();
-		
-		// output-path
-		// threads
-		// iterations
-		// random seed
-		
 
 		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), IDFConfigurator.getConfigGroups());
 		cmd.applyConfiguration(config);
+
+		config.controler().setOutputDirectory(cmd.getOptionStrict("output-path"));
+
+		int threads = cmd.getOption("threads").map(Integer::parseInt).orElse(12);
+		config.global().setNumberOfThreads(threads);
+		config.qsim().setNumberOfThreads(threads);
+
+		int iterations = cmd.getOption("iterations").map(Integer::parseInt).orElse(120);
+		config.controler().setLastIteration(iterations);
+		EqasimConfigGroup.get(config).setTripAnalysisInterval(iterations);
+
+		int randomSeed = cmd.getOption("random-seed").map(Integer::parseInt).orElse(1234);
+		config.global().setRandomSeed(randomSeed);
 
 		DiscreteModeChoiceConfigGroup.getOrCreate(config).setModeAvailability("LEAD");
 
