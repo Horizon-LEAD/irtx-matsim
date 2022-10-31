@@ -49,8 +49,6 @@ public class RunSimulation {
 		int randomSeed = cmd.getOption("random-seed").map(Integer::parseInt).orElse(1234);
 		config.global().setRandomSeed(randomSeed);
 
-		DiscreteModeChoiceConfigGroup.getOrCreate(config).setModeAvailability("LEAD");
-
 		Scenario scenario = ScenarioUtils.createScenario(config);
 		IDFConfigurator.configureScenario(scenario);
 		ScenarioUtils.loadScenario(scenario);
@@ -65,6 +63,8 @@ public class RunSimulation {
 			File freightPath = new File(cmd.getOptionStrict("freight-path"));
 			FreightConfigurator configurator = new FreightConfigurator(freightPath);
 			configurator.configure(config, scenario);
+
+			DiscreteModeChoiceConfigGroup.getOrCreate(config).setModeAvailability("LEAD");
 			controller.addOverridingModule(new LEADModeChoiceModule(configurator));
 		}
 
