@@ -382,7 +382,7 @@ For each scenario, the congestion KPIs can be calculated:
 
 ```bash
 papermill "Congestion Analysis.ipynb" /dev/null \
-  -psimulation_output_path /irtx-matsim/output/output_{scenario}/congestion.csv \
+  -psimulation_output_path /irtx-matsim/output/output_{scenario} \
   -pkpi_path /irtx-matsim/output/congestion_{scenario}.json
 ```
 

@@ -213,6 +213,50 @@
                 "dataType": "str",
                 "regex": "[0-9]+[MG]"
             }
+        },
+        { "comment": "Here starting parameters for the congestion analysis" },
+        {
+            "name": "MATSim output path",
+            "variableName": "simulation_output_path",
+            "description": "Path to the output directory of a MATSim simulation",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "directory",
+                "dataType": "directory",
+            }
+        },
+        {
+            "name": "KPI output path",
+            "variableName": "kpi_path",
+            "description": "Path where to save the aggregated congestion information",
+            "isOutput": true,
+            "isOutputDir": true,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "json"
+            }
+        },
+        {
+            "name": "Delay cutoff value",
+            "variableName": "cutoff_min",
+            "description": "To avoid outliers, it defines a cutoff value for the observed delays",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int"
+            }
         }
     ]
 }
