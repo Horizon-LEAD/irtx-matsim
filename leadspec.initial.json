@@ -1,0 +1,218 @@
+{
+    "name": "IRTX MATSim Implementation",
+    "description":"This model is a wrapper around the multi-agent transport simulation framework MATSim",
+    "version": "1.0.0",
+    "status":"draft",
+    "types": [
+        {"name": "Network", "description":"???"}
+    ],
+    "dockerImage":"???",
+    "url": "https://github.com/Horizon-LEAD/irtx-matsim",
+    "modelData":  [
+        { "comment": "Here starting parameters for a MATSim simulation" },
+        {
+            "name": "Configuration path",
+            "variableName": "config-path",
+            "description": "Path to the configuration file",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "xml"
+            }
+        },
+        {
+            "name": "Output directory path",
+            "variableName": "output-path",
+            "description": "Path to the directory in which the simulation results will be saved",
+            "isOutput": true,
+            "isOutputDir": true,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "directory",
+                "dataType": "directory",
+            }
+        },
+        {
+            "name": "Freight data input path",
+            "variableName": "freight-path",
+            "description": "Path to the freight movements to be integrated into the simulation",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "json"
+            }
+        },
+        {
+            "name": "Random seed",
+            "variableName": "random-seed",
+            "description": "Random seed for the simulation",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int"
+            }
+        },
+        {
+            "name": "Iterations",
+            "variableName": "iterations",
+            "description": "Number of iterations to run",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int"
+            }
+        },
+        {
+            "name": "Threads",
+            "variableName": "threads",
+            "description": "Number of threads to use",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int"
+            }
+        },
+        {
+            "name": "Memory",
+            "variableName": "Xmx",
+            "description": "Memory available to Java",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "str",
+                "dataType": "str",
+                "regex": "[0-9]+[MG]"
+            }
+        },
+        { "comment": "Here starting parameters for the MATSim simulation cutter" },
+        {
+            "name": "Configuration path",
+            "variableName": "config-path",
+            "description": "Path to the scenario configuration file",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "xml"
+            }
+        },
+        {
+            "name": "Output directory path",
+            "variableName": "output-path",
+            "description": "Path to the directory in which the cut simulation data will be saved",
+            "isOutput": true,
+            "isOutputDir": true,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "directory",
+                "dataType": "directory",
+            }
+        },
+        {
+            "name": "Spatial extent path",
+            "variableName": "extent-path",
+            "description": "Path to a geographic file describing the spatila extent of the cutting region",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "shp"
+            }
+        },
+        {
+            "name": "Output prefix",
+            "variableName": "prefix",
+            "description": "All generated files will be prepended by this prefix",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "str",
+                "dataType": "str"
+            }
+        },
+        {
+            "name": "Input population plans file",
+            "variableName": "config:plans.inputPlansFile",
+            "description": "Path to the plans file of the output of the converged simulation that should be used as a basis for cutting.",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "xml.gz"
+            }
+        },
+        {
+            "name": "Threads",
+            "variableName": "threads",
+            "description": "Number of threads to use",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int"
+            }
+        },
+        {
+            "name": "Memory",
+            "variableName": "Xmx",
+            "description": "Memory available to Java",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "str",
+                "dataType": "str",
+                "regex": "[0-9]+[MG]"
+            }
+        }
+    ]
+}

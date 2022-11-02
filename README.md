@@ -1,10 +1,5 @@
 # IRTX MATSim Implementation
 
-## TODO
-
-- Test that this works with the prepared input and output data
-- JSON file
-
 ## Introduction
 
 This model is a wrapper around the multi-agent transport simulation framework MATSim:
@@ -102,13 +97,13 @@ Note that the regional simulation usually only needs to be run once and all deta
 analyses are performed on a smaller cut-out. Further below it is described how such
 a cut out can be created using the wrapped model. In case such a cut-out is to be created,
 a geographic perimeter needs to be defined using an input file in Shapefile format. For the
-Lyon use case, as respective file is provided in `scenario_data/perimeter.shp`.
+Lyon use case, as respective file is provided in `data/perimeter_lyon.shp`.
 
 **Commercial vehicle simulation**
 
 To run the local simulations and include the commercial vehicles from the LEAD
 pipeline, output data from the JSprit - MATSim connector needs to be provided
-in JSON format, e.g. `input_traces.json`. This input file is structured as
+in JSON format, e.g. `traces.json`. This input file is structured as
 follows:
 
 ```json
@@ -127,7 +122,7 @@ follows:
 
 First, a list of vehicle types is given, after a list of individual vehicles
 with their stops. Each vehicle refers to a vehicle type which is defined by
-its maximum road speed. Futhermore, each vehicle has a list of stops, which
+its maximum road speed. Furthermore, each vehicle has a list of stops, which
 are defined as follows:
 
 ```json
@@ -161,9 +156,9 @@ agent starts/ends a trip/activity, ...). It is the major output file from which
 second-order analyses can be derived. The relevant files for the use of the
 MATSim model in LEAD are:
 
-- `/output/trips.csv`: A file containing all trips that happened during the simulation including their mode of transport and the covered distance. Note that each commercial vehicle type defined in the input files is represented as one individual mode identified as `freight:{vehicle_type_id}`. The trips file is also used to generate the input for the downstream noise and emission models using the respective connectors.
-- `/output/congestion.csv`: A file specifically develope in the MATSim implementation for LEAD which compares all `car` trips in terms of their recorded travel time in the simulation and the direct freeflow travel time of the same trip. The LEAD repository contains a script that allows to generate high-level congestion KPIs based on this file (see below).
-- `/output/output_plans.xml.gz`: Contains the final daily mobility plans of all agents. This file is used as a basis for cutting a smaller scope simulation from a larger one.
+- `trips.csv`: A file containing all trips that happened during the simulation including their mode of transport and the covered distance. Note that each commercial vehicle type defined in the input files is represented as one individual mode identified as `freight:{vehicle_type_id}`. The trips file is also used to generate the input for the downstream noise and emission models using the respective connectors.
+- `congestion.csv`: A file specifically develope in the MATSim implementation for LEAD which compares all `car` trips in terms of their recorded travel time in the simulation and the direct freeflow travel time of the same trip. The LEAD repository contains a script that allows to generate high-level congestion KPIs based on this file (see below).
+- `output_plans.xml.gz`: Contains the final daily mobility plans of all agents. This file is used as a basis for cutting a smaller scope simulation from a larger one.
 
 To generate the aggregated congestion information, the notebook `Congestion Analysis.ipynb` can be used (see below). The output of this notebook is a `json` file that is structued as follows:
 
@@ -203,12 +198,12 @@ changed, it can be reused for multiple model runs. To test whether the `jar` has
 been build successfully, call
 
 ```bash
-java -cp /path/to/lead-jsprit-1.0.0.jar fr.irtx.lead.matsim.RunVerification
+java -cp /irtx-matsim/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.matsim.RunVerification
 ```
 
 which should respond by the message `It works!`.
 
-# Running the model
+## Running the model
 
 The model repository provides the code to run the MATSim model itself and to
 generate congestion KPIs. Note that in the proposed LEAD use case for Lyon,
@@ -224,7 +219,7 @@ The model, hence, provides three functionalities:
 
 These are described in detail in the following.
 
-**MATSim simulation**
+### MATSim simulation
 
 To run a MATSim simulation, the respective jar needs to be built first. We
 assume that the configuration file of the underlying MATSim scenario is located
@@ -232,7 +227,7 @@ at `/path/to/config.xml`. The simulation can then be started in the following
 way:
 
 ```bash
-java -Xmx20g -cp java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
+java -Xmx20g -cp /irtx-matsim/java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
   --config-path /path/to/config.xml \
   --output-path /path/to/output_directory \
   --threads 8 \
@@ -265,12 +260,12 @@ Parameter             | Values                            | Description
 
 Note that the memory available to Java can be configured using the `-Xmx` option and by appending a size of the format `1024M` to define the amount in megabytes or `20G` to define the amount in gigabytes.
 
-**Cutting a simulation**
+### Cutting a simulation
 
 Using another run class in from the same `jar` file, one can cut a generated simulation as follows:
 
 ```bash
-java -Xmx20G -cp java/target/lead-matsim-1.0.0.jar org.eqasim.core.scenario.cutter.RunScenarioCutter \
+java -Xmx20G -cp /irtx-matsim/java/target/lead-matsim-1.0.0.jar org.eqasim.core.scenario.cutter.RunScenarioCutter \
   --config-path /path/to/config.xml \
   --extent-path /path/to/perimeter.shp \
   --output-path /path/to/output_directory \
@@ -297,7 +292,7 @@ Parameter             | Values                            | Description
 
 After running the cutter, you'll find the exact same input files for a MATSim simulation as described above in the `output-path`, possibly with a custom prefix according to the command line parameters. This simulation can then be restarted as a standard MATSim simulation (see above).
 
-**Congestion analysis**
+### Congestion analysis
 
 Finally, the repository contains `Congestion.ipynb`, a notebook which allows to
 generate aggregated congestion indicators from the MATSim simulation. To run it,
@@ -320,6 +315,8 @@ Parameter             | Values                            | Description
 
 There is one **optional** parameter:
 
+Parameter             | Values                            | Description
+---                   | ---                               | ---
 `cutoff_min`         | Real (default `60`)                            | To avoid outliers, it defines a cutoff value for the observed delays
 
 ## Standard scenarios
@@ -334,11 +331,9 @@ First, the baseline simulations can be run, based on the synthetic population
 output. The command to do so is:
 
 ```bash
-mkdir -p /path/to/irtx-matsim/output/output_lead_{year}
-
-java -Xmx20g -cp java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
-  --config-path /path/to/irtx-synpop/output/lead_{year}_5pct_config.xml \
-  --output-path /path/to/irtx-matsim/output/output_lead_{year}
+java -Xmx20g -cp /irtx-matsim/java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
+  --config-path /irtx-synpop/output/lead_{year}_5pct_config.xml \
+  --output-path /irtx-matsim/output/output_lead_{year}
 ```
 
 Here, `year` can be replaced by `2022` or `2030`.
@@ -351,11 +346,11 @@ as follows:
 
 ```bash
 java -Xmx20G -cp java/target/lead-matsim-1.0.0.jar org.eqasim.core.scenario.cutter.RunScenarioCutter \
-  --config-path /path/to/irtx-synpop/output/lead_{year}_5pct_config.xml \
-  --extent-path scenario_data/perimeter.shp \
-  --output-path /path/to/irtx-matsim/output \
+  --config-path /irtx-synpop/output/lead_{year}_5pct_config.xml \
+  --extent-path data/perimeter_lyon.shp \
+  --output-path /irtx-matsim/output \
   --prefix perimeter_{year}_ \
-  --config:plans.inputPlansFile /path/to/irtx-matsim/output/output_lead_{year}/output_plans.xml.gz
+  --config:plans.inputPlansFile /irtx-matsim/output/output_lead_{year}/output_plans.xml.gz
 ```
 
 Again, `year` can be replaced by `2022` or `2030`. Note that the baseline simulation and cutting only needs to be redone when the upstream synthetic population is changed.
@@ -366,23 +361,19 @@ Based on the cut perimeters, the local simulations for Confluence with the three
 scenarios from the JSprit model can be run. First for *Baseline 2022*:
 
 ```bash
-mkdir -p /path/to/irtx-matsim/output/output_baseline_{year}
-
-java -Xmx20g -cp java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
-  --config-path /path/to/irtx-matsim/output/perimeter_2022_config.xml \
-  --output-path /path/to/irtx-matsim/output/output_baseline_{year} \
-  --freight-path /path/to/irtx-jsprit-matsim-connector/output/traces_baseline_2022.json
+java -Xmx20g -cp /irtx-matsim/java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
+  --config-path /irtx-matsim/output/perimeter_2022_config.xml \
+  --output-path /irtx-matsim/output/output_baseline_2022 \
+  --freight-path /irtx-jsprit-matsim-connector/output/traces_baseline_2022.json
 ```
 
 Then for *UCC 2022* and *UCC 2030* with `{year}` replaces by the respective year:
 
 ```bash
-mkdir -p /path/to/irtx-matsim/output/output_baseline_{year}
-
-java -Xmx20g -cp java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
-  --config-path /path/to/irtx-matsim/output/perimeter_{year}_config.xml \
-  --output-path /path/to/irtx-matsim/output/output_ucc_{year} \
-  --freight-path /path/to/irtx-jsprit-matsim-connector/output/traces_ucc_{year}.json
+java -Xmx20g -cp /irtx-matsim/java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
+  --config-path /irtx-matsim/output/perimeter_{year}_config.xml \
+  --output-path /irtx-matsim/output/output_ucc_{year} \
+  --freight-path /irtx-jsprit-matsim-connector/output/traces_ucc_{year}.json
 ```
 
 **Congestion**
@@ -391,18 +382,8 @@ For each scenario, the congestion KPIs can be calculated:
 
 ```bash
 papermill "Congestion Analysis.ipynb" /dev/null \
-  -psimulation_output_path /path/to/irtx-matsim/output/output_baseline_2022/congestion.csv \
-  -pkpi_path /path/to/irtx-matsim/output/congestion_baseline_2022.json
+  -psimulation_output_path /irtx-matsim/output/output_{scenario}/congestion.csv \
+  -pkpi_path /irtx-matsim/output/congestion_{scenario}.json
 ```
 
-```bash
-papermill "Congestion Analysis.ipynb" /dev/null \
-  -psimulation_output_path /path/to/irtx-matsim/output/output_ucc_2022/congestion.csv \
-  -pkpi_path /path/to/irtx-matsim/output/congestion_ucc_2022.json
-```
-
-```bash
-papermill "Congestion Analysis.ipynb" /dev/null \
-  -psimulation_output_path /path/to/irtx-matsim/output/output_ucc_2030/congestion.csv \
-  -pkpi_path /path/to/irtx-matsim/output/congestion_ucc_2030.json
-```
+Replace `{scenario} = baseline_2022 | ucc_2022 | ucc_2030`.
