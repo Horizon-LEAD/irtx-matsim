@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Verify;
 
 import fr.irtx.lead.matsim.freight.FreightStop.FreightStopLocation;
+import fr.irtx.lead.matsim.freight.FreightStop.FreightStopType;
 
 public class FreightConfigurator {
 	private final File freightPath;
@@ -120,8 +121,16 @@ public class FreightConfigurator {
 
 				Activity activity = factory.createActivityFromCoord("freight:" + stop.type.toString(),
 						convert(stop.location));
-				activity.setStartTime(stop.arrivalTime);
-				activity.setEndTime(stop.departureTime);
+
+				if (stop.type.equals(FreightStopType.start)) {
+					activity.setEndTime(stop.departureTime);
+				} else if (!stop.type.equals(FreightStopType.end)) {
+					activity.setStartTime(stop.arrivalTime);
+					activity.setMaximumDuration(stop.departureTime - stop.arrivalTime);
+				} else if (!stop.type.equals(FreightStopType.end)) {
+					activity.setStartTime(stop.arrivalTime);
+				}
+
 				plan.addActivity(activity);
 
 				currentLocation = convert(stop.location);
