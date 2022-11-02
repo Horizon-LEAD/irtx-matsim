@@ -174,7 +174,7 @@ the population compared to a freeflow travel time for their car trips in minutes
 The second slot `delay_per_driver_min` divides this value by the number of people that
 have used a car during the day.
 
-# Building the model
+## Building the model
 
 The MATSim model is provided as Java code. To run it, it first needs to be built using
 the Maven build system. For that purpose, one needs to enter the `java` directory
