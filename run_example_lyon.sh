@@ -52,6 +52,6 @@ java -Xmx20g -cp /home/ubuntu/irtx-matsim/java/target/lead-matsim-1.0.0.jar fr.i
 ## Congestion
 for scenario in baseline_2022 ucc_2022 ucc_2030; do
 	papermill "Congestion Analysis.ipynb" /dev/null \
-	  -psimulation_output_path /home/irtx-matsim/output/output_${scenario} \
+	  -psimulation_output_path /home/ubuntu/irtx-matsim/output/output_${scenario} \
     -pkpi_path /home/ubuntu/irtx-matsim/output/congestion_${scenario}.json
 done
