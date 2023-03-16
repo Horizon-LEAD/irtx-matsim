@@ -36,6 +36,7 @@ RUN cd /srv/app/java \
     && mvn package \
     && cd -
 
+ENV TERM=xterm
 COPY src /srv/app/src
 COPY data /srv/app/data
 RUN chmod +x /srv/app/src/entrypoint.sh
