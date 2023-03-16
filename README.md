@@ -387,3 +387,12 @@ papermill "Congestion Analysis.ipynb" /dev/null \
 ```
 
 Replace `{scenario} = baseline_2022 | ucc_2022 | ucc_2030`.
+
+```bash
+docker run --rm \
+  -v $PWD/sample-data:/data \
+  matsim-irtx:latest \
+  /data/input/lead_2022_5pct_config.xml \
+  /data/input/traces.json \
+  /data/output/
+```
