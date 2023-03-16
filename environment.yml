@@ -1,3 +1,5 @@
+name: matsim
+
 channels:
   - defaults
 
