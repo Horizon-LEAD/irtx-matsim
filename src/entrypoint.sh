@@ -80,8 +80,6 @@ java -Xmx20g -cp /srv/app/java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.
 if [ $? -ne 0 ]; then
     exit 1
 fi
-echo "1: output"
-ls -la ${OUT_PATH}
 
 java -Xmx20G -cp /srv/app/java/target/lead-matsim-1.0.0.jar org.eqasim.core.scenario.cutter.RunScenarioCutter \
 	--config-path ${SYNPOP_CONFIG_XML} \
@@ -92,8 +90,6 @@ java -Xmx20G -cp /srv/app/java/target/lead-matsim-1.0.0.jar org.eqasim.core.scen
 if [ $? -ne 0 ]; then
     exit 2
 fi
-echo "2: output"
-ls -la ${OUT_PATH}
 
 java -Xmx20g -cp /srv/app/java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.RunSimulation \
     --config-path ${OUT_PATH}/perimeter_config.xml \
@@ -102,9 +98,7 @@ java -Xmx20g -cp /srv/app/java/target/lead-matsim-1.0.0.jar fr.irtx.lead.matsim.
 if [ $? -ne 0 ]; then
     exit 3
 fi
-echo "3: output"
-ls -la ${OUT_PATH}
 
-# papermill /srv/app/src/congestion-analysis.ipynb /dev/null \
-#     -psimulation_output_path /home/ubuntu/irtx-matsim/output/output_${scenario} \
-#     -pkpi_path /home/ubuntu/irtx-matsim/output/congestion_${scenario}.json
+papermill /srv/app/src/congestion-analysis.ipynb /dev/null \
+    -psimulation_output_path ${OUT_PATH} \
+    -pkpi_path ${OUT_PATH}/congestion.json
